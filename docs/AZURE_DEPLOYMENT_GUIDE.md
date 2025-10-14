@@ -103,8 +103,8 @@ For developers who want full automation with testing:
 
 - ✅ **Start with B1** for development and testing
 - ✅ **Scale up** only when performance requires it
-- ✅ **Stop App Service** when not in use for development
 - ✅ **Monitor costs** through Azure Cost Management
+- ⚠️ **Note:** App Service runs 24/7 - you're charged for the full month regardless of traffic
 
 ## Configuration
 

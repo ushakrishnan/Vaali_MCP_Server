@@ -9,38 +9,24 @@
 ![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)
 ![Cost Optimized](https://img.shields.io/badge/Cost-B1%20Basic%20Tier-00BCF2?logo=microsoftazure&logoColor=white)
-![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 
 ## ☁️ One-Click Azure Deployment
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fazuredeploy.json)
 
-**Deploy your own MCP Server instantly!** • **B1 Basic tier** • **Cost-effective defaults** • **Production-ready**
+**Deploy your own MCP Server for learning and experimentation!** • **B1 Basic tier** • **Cost-effective defaults**
 
-### 💰 **Estimated Monthly Costs** *(as of October 2025)*
+### 💰 **Cost Information** *(October 2025)*
 
-| Usage Level | B1 Basic | B2 Basic | S1 Standard | Popular Regions |
-|-------------|----------|----------|-------------|-----------------|
-| **Light usage** (1-5 users, few hours/day) | **$13-18/month** | $26-36/month | $65-90/month | US East, US West |
-| **Development** (team of 5-10, business hours) | **$15-22/month** | $30-44/month | $75-110/month | West Europe, UK South |
-| **Production** (10-20 users, always-on) | **$18-25/month** | $36-50/month | $90-125/month | East Asia, Australia East |
+**⚠️ Important:** Costs vary significantly by region and change over time. Always check current [Azure App Service pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region before deploying.
 
 **💡 Cost Factors:**
-- **Compute:** ~85% of total cost (varies by region)
-- **Outbound data:** Usually <$1/month for MCP usage
-- **Storage:** Minimal for stateless MCP servers
+- **App Service runs 24/7** - You're charged for the full month regardless of usage
+- **B1 Basic tier** is the most cost-effective starting point
+- **Regional variation** - US regions typically cost less than Asia Pacific
+- **Outbound data transfer** charges may apply for high-traffic scenarios
 
-**🌍 Regional Cost Variation:**
-- **Lowest:** US East, US West 2, US Central
-- **Medium:** West Europe, UK South, Canada Central  
-- **Higher:** Asia Pacific, Australia, Brazil South
-
-**⏱️ Cost Control Tips:**
-- **Stop when not needed:** Save 100% during non-use periods
-- **Start with B1 Basic:** Upgrade only when performance requires it
-- **Monitor usage:** Azure Cost Management provides detailed tracking
-
-*Estimates based on Azure pricing as of October 2025. Actual costs may vary by region and usage patterns. Check current [Azure App Service pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region.*
+**🎯 Recommendation:** Start with B1 Basic tier and monitor actual costs in Azure Cost Management
 
 A **Model Context Protocol (MCP) server** that demonstrates advanced AI agent capabilities through interactive parameter collection and contextual workflow automation, featuring both official MCP elicitation and intelligent parameter guidance patterns.
 
@@ -260,10 +246,10 @@ Demonstrates **progressive enhancement** in structured protocols - tools automat
 ✅ **Hybrid compatibility** - works with elicitation-capable AND standard clients  
 ✅ **Comprehensive testing suite** demonstrating interactive workflows  
 ✅ **Claude Desktop integration** with natural language usage  
-✅ **Production-ready** server architecture with graceful fallbacks  
+✅ **Learning-focused** server architecture for education and experimentation  
 ✅ **MIT Licensed** - Open source and ready for contributions
 
-Built on MCP SDK 1.19.1 and demonstrates cutting-edge interactive AI tool capabilities.
+Built on MCP SDK 1.7.0 and demonstrates interactive AI tool capabilities for learning purposes.
 
 ## ☁️ Complete Azure Deployment Guide
 
@@ -329,9 +315,10 @@ Production/Enterprise: S1 = ~5x Base Cost (includes staging)
 **💸 Cost Optimization Tips:**
 - Start with **B1** for development and testing
 - Upgrade only when you need more performance
-- Consider stopping the app service when not in use
 - Monitor usage through Azure Cost Management
 - Check current Azure pricing for your region
+
+**⚠️ Note:** App Service runs continuously 24/7 and charges for the full month regardless of usage
 
 ### 🚀 **What Gets Created:**
 - ✅ **App Service Plan** (Linux, your chosen tier)
