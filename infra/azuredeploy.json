@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "1556650060340321312"
+      "templateHash": "7655511517868277725"
     }
   },
   "parameters": {
@@ -18,14 +18,13 @@
     },
     "webAppName": {
       "type": "string",
-      "defaultValue": "[format('vaali-mcp-{0}', uniqueString(resourceGroup().id))]",
       "metadata": {
         "description": "Name of the web app (must be globally unique)"
       }
     },
     "appServicePlanName": {
       "type": "string",
-      "defaultValue": "[format('vaali-mcp-plan-{0}', uniqueString(resourceGroup().id))]",
+      "defaultValue": "[format('{0}-plan', parameters('webAppName'))]",
       "metadata": {
         "description": "Name of the App Service plan"
       }

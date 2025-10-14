@@ -3,10 +3,10 @@
 param location string = resourceGroup().location
 
 @description('Name of the web app (must be globally unique)')
-param webAppName string = 'vaali-mcp-${uniqueString(resourceGroup().id)}'
+param webAppName string
 
 @description('Name of the App Service plan')
-param appServicePlanName string = 'vaali-mcp-plan-${uniqueString(resourceGroup().id)}'
+param appServicePlanName string = '${webAppName}-plan'
 
 @description('App Service plan pricing tier - B1 recommended (lowest cost), B2 (2x B1), S1+ (production features)')
 @allowed([
