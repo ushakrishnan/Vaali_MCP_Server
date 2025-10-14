@@ -1,5 +1,5 @@
 // Azure App Service Infrastructure as Code
-@description('Location for all resources (e.g., East US, West Europe)')
+@description('Azure region name (case-sensitive). Common options: \'East US\', \'West US\', \'Central US\', \'East US 2\', \'West Europe\', \'North Europe\', \'UK South\', \'Southeast Asia\', \'East Asia\', \'Japan East\', \'Australia East\', \'Brazil South\', \'Canada Central\'. Use exact spelling with proper capitalization.')
 param location string
 
 @description('Name of the web app (must be globally unique, e.g., my-vaali-mcp-server)')
