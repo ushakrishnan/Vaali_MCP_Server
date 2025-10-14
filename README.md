@@ -262,38 +262,17 @@ Deploy your own instance of the Vaali MCP Server to Azure App Service:
 When you click "Deploy to Azure", you'll see a form asking for:
 
 1. **Subscription** - Select your Azure subscription
-2. **Resource Group** - Create new (recommended: `vaali-mcp-rg`) or use existing  
-3. **Location** - **Type exact region name** (case-sensitive): `East US`, `West US`, `Central US`, `West Europe`, `North Europe`, `UK South`, `Southeast Asia`, etc.
-4. **Web App Name** - Enter a globally unique name (e.g., `my-vaali-mcp-server`)
-5. **App Service Plan Name** - Enter a plan name (e.g., `my-vaali-mcp-server-plan`)
-6. **Pricing Tier** - Choose based on your needs:
+2. **Resource Group** - Create new (recommended: `vaali-mcp-rg`) or use existing
+3. **Web App Name** - Enter a globally unique name (e.g., `my-vaali-mcp-server`)
+4. **App Service Plan Name** - Enter a plan name (e.g., `my-vaali-mcp-server-plan`)
+5. **Pricing Tier** - Choose based on your needs:
    - **B1** (default) - Perfect for demos and learning
    - **B2** - Better for team development  
    - **S1** - Production with staging slots
 
 **💡 Tip:** Start with B1 Basic - you can always upgrade later!
 
-### 🌍 **Azure Region Selection Guide:**
-
-**⚠️ Important:** Location field requires **exact region name** (case-sensitive, spaces matter!)
-
-**🇺🇸 Popular US Regions:**
-- `East US` - Lowest cost, best for most users
-- `West US` - West coast, good latency for Pacific
-- `Central US` - Central location, reliable
-- `East US 2` - Secondary east coast option
-
-**🇪🇺 European Regions:**
-- `West Europe` (Netherlands) - Primary EU region
-- `North Europe` (Ireland) - Secondary EU region  
-- `UK South` (London) - UK-specific compliance
-
-**🌏 Asia Pacific:**
-- `Southeast Asia` (Singapore) - Primary APAC
-- `East Asia` (Hong Kong) - Secondary APAC
-- `Japan East` (Tokyo) - Japan-specific
-
-**💡 Cost Tip:** US regions (`East US`, `Central US`) typically have the lowest pricing.
+**📍 Location:** Resources are automatically deployed to the same region as your resource group for optimal performance and cost.
 
 ### 💰 **Pricing Tiers Explained:**
 

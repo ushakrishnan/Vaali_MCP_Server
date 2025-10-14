@@ -1,7 +1,4 @@
 // Azure App Service Infrastructure as Code
-@description('Azure region name (case-sensitive). Common options: \'East US\', \'West US\', \'Central US\', \'East US 2\', \'West Europe\', \'North Europe\', \'UK South\', \'Southeast Asia\', \'East Asia\', \'Japan East\', \'Australia East\', \'Brazil South\', \'Canada Central\'. Use exact spelling with proper capitalization.')
-param location string
-
 @description('Name of the web app (must be globally unique, e.g., my-vaali-mcp-server)')
 param webAppName string
 
@@ -25,7 +22,7 @@ param skuCapacity int = 1
 // App Service Plan (Linux, configurable tier)
 resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
   name: appServicePlanName
-  location: location
+  location: resourceGroup().location
   sku: {
     name: skuName
     tier: skuName == 'B1' || skuName == 'B2' ? 'Basic' : 'Standard'
@@ -40,7 +37,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
 // Web App
 resource webApp 'Microsoft.Web/sites@2023-01-01' = {
   name: webAppName
-  location: location
+  location: resourceGroup().location
   properties: {
     serverFarmId: appServicePlan.id
     siteConfig: {
