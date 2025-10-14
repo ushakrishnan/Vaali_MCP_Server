@@ -322,7 +322,9 @@ az deployment group create \
   --parameters webAppName=my-unique-vaali-server
 ```
 
-### 🔄 **GitHub Actions CI/CD Setup (Advanced):**
+### 🔄 **GitHub Actions CI/CD Setup (Automatic Deployment):**
+
+**✨ Now with automatic deployment!** The workflow triggers on every push to main branch.
 
 For continuous deployment from your GitHub repository:
 
@@ -342,21 +344,31 @@ For continuous deployment from your GitHub repository:
    - Name: `AZURE_CREDENTIALS`
    - Value: Paste the entire JSON output from step 2
 
-4. **Deploy:** Push to `main` branch or manually trigger the workflow
+4. **Automatic Deployment:** 
+   - ✅ **Push to main** → Automatically deploys to Azure
+   - ✅ **Merge PR** → Automatically deploys to Azure  
+   - ✅ **Manual trigger** → Use "Run workflow" button
 
-**✨ What the GitHub Actions workflow does:**
-- ✅ Builds and tests the project
-- ✅ Creates Azure infrastructure automatically
-- ✅ Deploys the application
-- ✅ Configures production settings
-- ✅ Runs health checks
-- ✅ Provides deployment URLs
+**🎯 Smart Deployment Logic:**
+- **Skips deployment** if AZURE_CREDENTIALS not configured (shows setup instructions)
+- **Builds and tests** on every push (even without Azure credentials)
+- **Deploys only** when credentials are available and code changes
+- **Ignores documentation changes** (*.md files, docs/) for efficiency
+
+**✨ What the automated workflow does:**
+- ✅ Builds and tests the project on every push
+- ✅ Creates Azure infrastructure automatically (if needed)
+- ✅ Deploys the application to Azure App Service
+- ✅ Configures production settings (NODE_ENV, PORT, etc.)
+- ✅ Runs health checks and provides deployment URLs
+- ✅ Shows helpful setup instructions if credentials missing
 
 **🎯 Workflow Features:**
 - **Manual Deployment:** Use "Run workflow" button for on-demand deploys
-- **Auto Deployment:** Automatically deploys on push to main branch
+- **Auto Deployment:** Automatically deploys on push to main branch or merged PRs
 - **Environment Support:** Production and staging environment options
 - **Health Monitoring:** Automatic endpoint validation after deployment
+- **Smart Skipping:** Only deploys when Azure credentials are configured
 
 **💰 For current pricing:** Check [Azure App Service Pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region.
 
