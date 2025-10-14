@@ -1,0 +1,40 @@
+{
+  "name": "vaali",
+  "version": "0.0.1",
+  "description": "My MCP Server",
+  "main": "./lib/src/index.js",
+  "scripts": {
+    "dev:sse": "nodemon --exec node --inspect=9239 --signal SIGINT -r ts-node/register ./src/index.ts sse",
+    "dev:stdio": "nodemon --quiet --exec node --signal SIGINT -r ts-node/register ./src/index.ts stdio",
+    "dev:inspector": "mcp-inspector",
+    "build": "tsc --build",
+    "start:sse": "node ./lib/src/index.js sse",
+    "start:sdtio": "node ./lib/src/index.js stdio",
+    "test:mcp": "node tests/run-tests.mjs",
+    "test:mcp:capabilities": "node tests/test-mcp-capabilities.mjs",
+    "test:mcp:tools": "node tests/test-tools-list.mjs", 
+    "test:mcp:parameters": "node tests/test-parameter-schemas.mjs",
+    "test:advanced-concept": "node tests/advanced-concept-demo.mjs",
+    "test:advanced-elicitation": "node tests/advanced-elicitation-client.mjs",
+    "test:working-advanced": "node tests/working-advanced-demo.mjs",
+    "test:elicitation-flow": "node tests/test-elicitation-flow.mjs",
+    "test:official-elicitation": "node tests/test-official-elicitation.mjs",
+    "test:simple": "node tests/test-simple.mjs",
+    "test:all": "npm run build && npm run test:mcp && npm run test:advanced-concept"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.7.0",
+    "express": "^4.21.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/inspector": "0.6.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.10",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
+}

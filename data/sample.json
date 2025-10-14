@@ -1,0 +1,71 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Alice",
+      "role": "admin",
+      "location": "New York",
+      "preferences": {
+        "weatherAlerts": true,
+        "temperatureUnit": "fahrenheit",
+        "language": "en"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Bob",
+      "role": "user",
+      "location": "London",
+      "preferences": {
+        "weatherAlerts": false,
+        "temperatureUnit": "celsius",
+        "language": "en"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Carol",
+      "role": "user",
+      "location": "Tokyo",
+      "preferences": {
+        "weatherAlerts": true,
+        "temperatureUnit": "celsius",
+        "language": "ja"
+      }
+    }
+  ],
+  "settings": {
+    "theme": "dark",
+    "language": "en",
+    "defaultWeatherUnit": "celsius",
+    "notificationSettings": {
+      "weatherUpdates": true,
+      "dailySummary": "08:00",
+      "alertThreshold": {
+        "temperature": 35,
+        "windSpeed": 50,
+        "precipitation": 80
+      }
+    }
+  },
+  "locationPresets": [
+    {
+      "name": "Headquarters",
+      "location": "San Francisco",
+      "description": "Company HQ",
+      "timezone": "America/Los_Angeles"
+    },
+    {
+      "name": "Remote Office",
+      "location": "Austin",
+      "description": "Secondary office",
+      "timezone": "America/Chicago"
+    },
+    {
+      "name": "Data Center",
+      "location": "Dublin",
+      "description": "EU data center",
+      "timezone": "Europe/Dublin"
+    }
+  ]
+}

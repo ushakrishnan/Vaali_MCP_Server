@@ -1,0 +1,23 @@
+{
+  "appName": "vaali",
+  "version": "1.0.0",
+  "environment": "development",
+  "features": ["resources", "prompts", "tools", "roots"],
+  "defaultLocation": "San Francisco",
+  "timezone": "America/Los_Angeles",
+  "supportedRegions": ["North America", "Europe", "Asia-Pacific"],
+  "serverInfo": {
+    "transport": "stdio",
+    "capabilities": {
+      "resources": true,
+      "prompts": true,
+      "tools": true,
+      "roots": true
+    }
+  },
+  "defaults": {
+    "weatherUnit": "celsius",
+    "language": "en",
+    "theme": "auto"
+  }
+}
