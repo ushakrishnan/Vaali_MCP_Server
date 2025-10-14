@@ -1,12 +1,12 @@
 // Azure App Service Infrastructure as Code
-@description('Location for all resources')
-param location string = resourceGroup().location
+@description('Location for all resources (e.g., East US, West Europe)')
+param location string
 
-@description('Name of the web app (must be globally unique)')
+@description('Name of the web app (must be globally unique, e.g., my-vaali-mcp-server)')
 param webAppName string
 
-@description('Name of the App Service plan')
-param appServicePlanName string = '${webAppName}-plan'
+@description('Name of the App Service plan (e.g., my-vaali-mcp-server-plan)')
+param appServicePlanName string
 
 @description('App Service plan pricing tier - B1 recommended (lowest cost), B2 (2x B1), S1+ (production features)')
 @allowed([

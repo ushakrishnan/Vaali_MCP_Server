@@ -5,28 +5,26 @@
     "_generator": {
       "name": "bicep",
       "version": "0.38.33.27573",
-      "templateHash": "7655511517868277725"
+      "templateHash": "4369605571968573686"
     }
   },
   "parameters": {
     "location": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]",
       "metadata": {
-        "description": "Location for all resources"
+        "description": "Location for all resources (e.g., East US, West Europe)"
       }
     },
     "webAppName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the web app (must be globally unique)"
+        "description": "Name of the web app (must be globally unique, e.g., my-vaali-mcp-server)"
       }
     },
     "appServicePlanName": {
       "type": "string",
-      "defaultValue": "[format('{0}-plan', parameters('webAppName'))]",
       "metadata": {
-        "description": "Name of the App Service plan"
+        "description": "Name of the App Service plan (e.g., my-vaali-mcp-server-plan)"
       }
     },
     "skuName": {

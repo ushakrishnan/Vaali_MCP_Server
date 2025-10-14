@@ -263,9 +263,9 @@ When you click "Deploy to Azure", you'll see a form asking for:
 
 1. **Subscription** - Select your Azure subscription
 2. **Resource Group** - Create new (recommended: `vaali-mcp-rg`) or use existing  
-3. **Region** - Choose location (default: East US)
+3. **Location** - Choose your preferred region (e.g., `East US`, `West Europe`)
 4. **Web App Name** - Enter a globally unique name (e.g., `my-vaali-mcp-server`)
-5. **App Service Plan Name** - Auto-generated from web app name (e.g., `my-vaali-mcp-server-plan`)
+5. **App Service Plan Name** - Enter a plan name (e.g., `my-vaali-mcp-server-plan`)
 6. **Pricing Tier** - Choose based on your needs:
    - **B1** (default) - Perfect for demos and learning
    - **B2** - Better for team development  
