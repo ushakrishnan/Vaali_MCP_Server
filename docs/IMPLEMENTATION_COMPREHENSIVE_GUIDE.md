@@ -968,6 +968,84 @@ The GitHub Actions workflow includes:
 - ✅ **Secure Storage:** GitHub encrypts repository secrets
 - ✅ **Audit Trail:** All deployments logged in GitHub Actions and Azure Activity Log
 
+### Alternative: Deploy to Azure Button + Manual Updates
+
+For users who prefer the one-click "Deploy to Azure" button approach, here are efficient update strategies that don't require deleting resource groups:
+
+#### Option 1: Azure Portal Deployment Center (Recommended)
+
+After initial deployment via Deploy to Azure button:
+
+1. **Navigate to App Service** in Azure Portal
+2. **Deployment Center** → **Settings** 
+3. **Source:** GitHub
+4. **Authorize GitHub** and select repository
+5. **Branch:** main
+6. **Save configuration**
+
+**Result:** Automatic deployment on every push to main branch! 🚀
+
+#### Option 2: Azure CLI Quick Updates
+
+```bash
+# Build project locally
+npm run build
+
+# Create deployment package (Windows PowerShell)
+Compress-Archive -Path dist,package.json,package-lock.json,data,config.json -DestinationPath deploy.zip -Force
+
+# Deploy to existing App Service (replace YOUR_APP_NAME)
+az webapp deployment source config-zip \
+  --resource-group vaali-mcp-rg \
+  --name YOUR_APP_NAME \
+  --src deploy.zip
+
+# Optional: Restart app service
+az webapp restart --name YOUR_APP_NAME --resource-group vaali-mcp-rg
+
+# Get deployment URL to test
+az webapp show --name YOUR_APP_NAME --resource-group vaali-mcp-rg --query defaultHostName -o tsv
+```
+
+```bash
+# Linux/macOS alternative for zip creation
+zip -r deploy.zip dist package.json package-lock.json data config.json
+```
+
+#### Option 3: VS Code Azure Extension
+
+1. **Install Azure App Service extension** in VS Code
+2. **Sign in to Azure account**
+3. **Right-click App Service** → **Deploy to Web App**
+4. **Select dist folder** for deployment
+
+#### Option 4: Manual Workflow Trigger
+
+Use existing GitHub Actions workflow manually:
+
+1. **GitHub Actions tab** → **Deploy to Azure App Service**
+2. **Run workflow** → Select **production** environment
+3. **Monitor deployment** in Actions log
+
+#### Update Strategy Comparison
+
+| Method | Setup Time | Automation Level | Best For |
+|--------|------------|------------------|----------|
+| **Deployment Center** | 5 minutes | Fully automatic | Production use |
+| **Azure CLI** | None | Manual | Quick fixes |
+| **VS Code Extension** | 2 minutes | Semi-automatic | Development |
+| **GitHub Actions** | One-time | Triggered manually | Testing |
+
+**💡 Recommended Approach:**
+1. **Initial deployment:** Deploy to Azure button
+2. **Setup automation:** Deployment Center (one-time, 5 minutes)  
+3. **Ongoing updates:** Push to GitHub → Automatic deployment
+
+**⚠️ Never delete Resource Group for updates:**
+- **Wastes money:** New resource provisioning costs
+- **Loses configuration:** Custom domains, SSL, environment variables
+- **Unnecessary downtime:** All update methods work with existing resources
+
 This comprehensive implementation guide provides everything needed to build production-ready MCP servers with hybrid elicitation patterns, complete testing frameworks, and robust error handling.
 
 ## Conclusion

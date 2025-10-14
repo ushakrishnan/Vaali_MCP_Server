@@ -19,6 +19,8 @@ Comprehensive documentation for the Vaali MCP Server, featuring hybrid elicitati
 
 ### 🔧 Technical Implementation  
 - **[MCP_PROTOCOL_GUIDE.md](MCP_PROTOCOL_GUIDE.md)** - MCP protocol implementation and best practices
+- **[IMPLEMENTATION_COMPREHENSIVE_GUIDE.md](IMPLEMENTATION_COMPREHENSIVE_GUIDE.md)** - Complete development reference with deployment
+- **[AZURE_DEPLOYMENT_GUIDE.md](AZURE_DEPLOYMENT_GUIDE.md)** - Comprehensive Azure deployment and update strategies
 - **[ADVANCED_IMPLEMENTATION_SUMMARY.md](ADVANCED_IMPLEMENTATION_SUMMARY.md)** - Technical architecture overview
 - **[test-documentation.md](test-documentation.md)** - Complete test suite documentation
 
