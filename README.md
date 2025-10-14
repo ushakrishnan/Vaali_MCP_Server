@@ -12,6 +12,8 @@ A **Model Context Protocol (MCP) server** that demonstrates advanced AI agent ca
 - [What is This?](#-what-is-this)
 - [Technical Innovation](#-technical-innovation-for-researchers)
 - [Quick Start](#-quick-start)
+- [Deploy to Azure](#-deploy-to-azure)
+- [Configuration Guide](#-configuration-guide)
 - [Complete MCP Implementation](#-complete-mcp-implementation)
 - [Documentation](#-learn-more)
 - [VS Code Integration](#-vs-code-integration)
@@ -224,6 +226,218 @@ Demonstrates **progressive enhancement** in structured protocols - tools automat
 ✅ **MIT Licensed** - Open source and ready for contributions
 
 Built on MCP SDK 1.19.1 and demonstrates cutting-edge interactive AI tool capabilities.
+
+## ☁️ Deploy to Azure
+
+Deploy your own instance of the Vaali MCP Server to Azure App Service:
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fmain.bicep)
+
+**Cost-effective deployment:**
+- **Basic App Service Plan (B1)**: ~$13/month
+- **Always-on SSE transport** for reliable MCP connections
+- **Automatic scaling** and HTTPS included
+- **One-click deployment** with infrastructure as code
+
+**Alternative deployment methods:**
+```bash
+# Using Azure Developer CLI (azd)
+azd auth login
+azd up
+
+# Using Azure CLI directly
+az group create --name vaali-mcp-rg --location eastus
+az deployment group create --resource-group vaali-mcp-rg --template-file infra/main.bicep
+```
+
+## 🔧 Configuration Guide
+
+### 📱 Local Development Setup
+
+**For Claude Desktop Integration (Recommended for development):**
+
+1. **Build the project:**
+   ```bash
+   npm install
+   npm run build
+   ```
+
+2. **Configure Claude Desktop:**
+   
+   **Windows:** Edit `%APPDATA%\Claude\claude_desktop_config.json`  
+   **macOS:** Edit `~/Library/Application Support/Claude/claude_desktop_config.json`  
+   **Linux:** Edit `~/.config/Claude/claude_desktop_config.json`
+
+   ```json
+   {
+     "mcpServers": {
+       "vaali": {
+         "command": "node",
+         "args": ["C:/absolute/path/to/vaali/lib/src/index.js", "stdio"],
+         "cwd": "C:/absolute/path/to/vaali",
+         "env": {
+           "NODE_ENV": "development"
+         }
+       }
+     }
+   }
+   ```
+
+3. **Test the connection:**
+   - Restart Claude Desktop
+   - Try: "What tools do you have available?"
+   - Try: "Test the elicitation tool for rain prediction"
+
+**For Local SSE Testing:**
+```bash
+# Start server in SSE mode
+npm run start:sse
+
+# Test connection
+curl http://localhost:3001/sse
+```
+
+### ☁️ Azure Production Setup
+
+**After deploying to Azure, your server will be available at:**
+- **Main URL:** `https://vaali-mcp-server.azurewebsites.net`
+- **SSE Endpoint:** `https://vaali-mcp-server.azurewebsites.net/sse`
+
+**For MCP clients that support SSE transport:**
+
+```javascript
+// Example: Connecting to Azure-deployed Vaali server
+const { SSEClientTransport } = require('@modelcontextprotocol/sdk/client/sse.js');
+const { Client } = require('@modelcontextprotocol/sdk/client/index.js');
+
+const client = new Client(
+  {
+    name: "vaali-client",
+    version: "1.0.0"
+  },
+  {
+    capabilities: {}
+  }
+);
+
+const transport = new SSEClientTransport(
+  new URL('https://your-app-name.azurewebsites.net/sse')
+);
+
+await client.connect(transport);
+```
+
+**For web applications:**
+```html
+<!-- Direct SSE connection from browser -->
+<script>
+const eventSource = new EventSource('https://your-app-name.azurewebsites.net/sse');
+eventSource.onmessage = function(event) {
+  console.log('MCP Message:', event.data);
+};
+</script>
+```
+
+## 🔀 Transport Protocols Explained
+
+### **STDIO Transport (Local)**
+- **Use case:** Direct integration with Claude Desktop
+- **How it works:** Process-to-process communication
+- **Advantages:** Low latency, secure, no network overhead
+- **Configuration:** Claude Desktop config file
+
+### **SSE Transport (Azure/Web)**
+- **Use case:** Web-based MCP clients, cloud deployments
+- **How it works:** HTTP Server-Sent Events
+- **Advantages:** Works through firewalls, web-compatible, scalable
+- **Configuration:** HTTP endpoint URL
+
+## 🧪 Testing Your Deployment
+
+### **Local Testing (STDIO):**
+```bash
+# Test basic functionality
+npm run test:advanced-concept
+
+# Test with Claude Desktop
+# 1. Configure Claude Desktop (see above)
+# 2. In Claude: "What's the weather in Tokyo?"
+# 3. In Claude: "Test the elicitation tool"
+```
+
+### **Azure Testing (SSE):**
+```bash
+# Health check
+curl https://your-app-name.azurewebsites.net/sse
+
+# Test MCP capabilities
+curl -X POST https://your-app-name.azurewebsites.net/messages \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2024-11-05", "capabilities": {}, "clientInfo": {"name": "test", "version": "1.0.0"}}}'
+```
+
+## 🔧 Environment Variables
+
+### **Local Development:**
+```bash
+NODE_ENV=development
+TRANSPORT=stdio
+```
+
+### **Azure Production:**
+```bash
+NODE_ENV=production
+TRANSPORT=sse
+PORT=3001
+WEBSITE_NODE_DEFAULT_VERSION=18-lts
+SCM_DO_BUILD_DURING_DEPLOYMENT=true
+```
+
+## 🚀 Quick Start Examples
+
+### **Try These Commands in Claude Desktop (Local):**
+```
+"What's the weather in Seattle?"
+"Calculate 25 * 4 + 10"
+"Analyze the sentiment of 'This is amazing!'"
+"Generate a weather report for Alice"
+"Test the elicitation tool for rain prediction"
+```
+
+### **API Examples for Azure Deployment:**
+```bash
+# Get weather (via SSE)
+curl -X POST https://your-app.azurewebsites.net/messages \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "get_weather", "arguments": {"location": "Tokyo"}}}'
+
+# Test elicitation
+curl -X POST https://your-app.azurewebsites.net/messages \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "rain_prediction_with_elicitation", "arguments": {}}}'
+```
+
+## 🎯 Production Considerations
+
+### **Security:**
+- HTTPS enforced on Azure deployment
+- CORS configured for web access
+- No sensitive data in logs
+
+### **Performance:**
+- B1 App Service Plan suitable for moderate usage
+- Auto-scaling available if needed
+- Always-on connections for SSE
+
+### **Monitoring:**
+- Application Insights integration available
+- Health check endpoint: `/sse`
+- Log streaming through Azure portal
+
+### **Cost Optimization:**
+- B1 tier: ~$13/month base cost
+- No additional charges for MCP requests
+- Scale up/down as needed
 
 ## 🌟 Key Features
 

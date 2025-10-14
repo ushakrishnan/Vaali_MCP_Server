@@ -1,0 +1,89 @@
+name: Deploy to Azure App Service
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+
+env:
+  AZURE_RESOURCE_GROUP: vaali-mcp-rg
+  AZURE_LOCATION: eastus
+  WEB_APP_NAME: vaali-mcp-server
+  APP_SERVICE_PLAN_NAME: vaali-mcp-plan
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Create deployment archive
+      run: |
+        # Create deployment package
+        zip -r deploy.zip . -x "*.git*" "node_modules/@types/*" "src/*" "tests/*" "docs/*" "*.md"
+        
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Create Resource Group
+      run: |
+        az group create \
+          --name ${{ env.AZURE_RESOURCE_GROUP }} \
+          --location ${{ env.AZURE_LOCATION }}
+          
+    - name: Deploy Infrastructure
+      run: |
+        az deployment group create \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --template-file infra/main.bicep \
+          --parameters webAppName=${{ env.WEB_APP_NAME }} \
+          --parameters appServicePlanName=${{ env.APP_SERVICE_PLAN_NAME }}
+          
+    - name: Deploy Application
+      run: |
+        az webapp deployment source config-zip \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.WEB_APP_NAME }} \
+          --src deploy.zip
+          
+    - name: Restart App Service
+      run: |
+        az webapp restart \
+          --name ${{ env.WEB_APP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
+          
+    - name: Get App Service URL
+      id: app-url
+      run: |
+        APP_URL=$(az webapp show \
+          --name ${{ env.WEB_APP_NAME }} \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --query defaultHostName -o tsv)
+        echo "app-url=https://$APP_URL" >> $GITHUB_OUTPUT
+        echo "🚀 Deployed to: https://$APP_URL"
+        echo "📡 SSE Endpoint: https://$APP_URL/sse"
+        
+    - name: Health Check
+      run: |
+        echo "Waiting for deployment to be ready..."
+        sleep 30
+        curl -f ${{ steps.app-url.outputs.app-url }}/sse || echo "⚠️ Health check failed, but deployment completed"

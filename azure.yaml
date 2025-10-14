@@ -1,0 +1,11 @@
+# Azure Developer CLI configuration for App Service
+name: vaali-mcp-server
+metadata:
+  template: vaali-mcp-server@0.0.1-beta
+location: eastus
+
+services:
+  api:
+    project: .
+    language: js
+    host: appservice
