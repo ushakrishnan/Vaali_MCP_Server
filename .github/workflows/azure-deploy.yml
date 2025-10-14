@@ -2,6 +2,15 @@ name: Deploy to Azure App Service
 
 on:
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
   push:
     branches: [ main ]
     paths-ignore:
@@ -17,6 +26,9 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     
     steps:
     - name: Checkout code
@@ -36,19 +48,35 @@ jobs:
       
     - name: Create deployment archive
       run: |
-        # Create deployment package
-        zip -r deploy.zip . -x "*.git*" "node_modules/@types/*" "src/*" "tests/*" "docs/*" "*.md"
+        # Create deployment package with only necessary files
+        mkdir deployment
+        cp -r dist package.json package-lock.json deployment/
+        cd deployment && zip -r ../deploy.zip .
         
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Setup Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        
+    - name: Login to Azure with Service Principal
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      run: |
+        # Parse Azure credentials JSON
+        CLIENT_ID=$(echo $AZURE_CREDENTIALS | jq -r '.clientId')
+        CLIENT_SECRET=$(echo $AZURE_CREDENTIALS | jq -r '.clientSecret')
+        TENANT_ID=$(echo $AZURE_CREDENTIALS | jq -r '.tenantId')
+        SUBSCRIPTION_ID=$(echo $AZURE_CREDENTIALS | jq -r '.subscriptionId')
+        
+        # Login with service principal
+        az login --service-principal --username $CLIENT_ID --password $CLIENT_SECRET --tenant $TENANT_ID
+        az account set --subscription $SUBSCRIPTION_ID
         
     - name: Create Resource Group
       run: |
         az group create \
           --name ${{ env.AZURE_RESOURCE_GROUP }} \
-          --location ${{ env.AZURE_LOCATION }}
+          --location ${{ env.AZURE_LOCATION }} \
+          --output none || echo "Resource group may already exist"
           
     - name: Deploy Infrastructure
       run: |
@@ -56,20 +84,31 @@ jobs:
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --template-file infra/main.bicep \
           --parameters webAppName=${{ env.WEB_APP_NAME }} \
-          --parameters appServicePlanName=${{ env.APP_SERVICE_PLAN_NAME }}
+          --parameters appServicePlanName=${{ env.APP_SERVICE_PLAN_NAME }} \
+          --output none
           
     - name: Deploy Application
       run: |
         az webapp deployment source config-zip \
           --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
           --name ${{ env.WEB_APP_NAME }} \
-          --src deploy.zip
+          --src deploy.zip \
+          --timeout 600
+          
+    - name: Configure App Settings
+      run: |
+        az webapp config appsettings set \
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --name ${{ env.WEB_APP_NAME }} \
+          --settings NODE_ENV=production PORT=8080 \
+          --output none
           
     - name: Restart App Service
       run: |
         az webapp restart \
           --name ${{ env.WEB_APP_NAME }} \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }}
+          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+          --output none
           
     - name: Get App Service URL
       id: app-url
@@ -81,9 +120,26 @@ jobs:
         echo "app-url=https://$APP_URL" >> $GITHUB_OUTPUT
         echo "🚀 Deployed to: https://$APP_URL"
         echo "📡 SSE Endpoint: https://$APP_URL/sse"
+        echo "📄 Health: https://$APP_URL/health"
         
     - name: Health Check
       run: |
         echo "Waiting for deployment to be ready..."
-        sleep 30
-        curl -f ${{ steps.app-url.outputs.app-url }}/sse || echo "⚠️ Health check failed, but deployment completed"
+        sleep 60
+        
+        # Try multiple endpoints to verify deployment
+        for i in {1..5}; do
+          echo "Health check attempt $i/5..."
+          if curl -f -s ${{ steps.app-url.outputs.app-url }}/sse > /dev/null; then
+            echo "✅ SSE endpoint is healthy"
+            break
+          elif curl -f -s ${{ steps.app-url.outputs.app-url }}/health > /dev/null; then
+            echo "✅ Health endpoint is responding" 
+            break
+          else
+            echo "⚠️ Endpoints not ready yet, waiting..."
+            sleep 30
+          fi
+        done
+        
+        echo "Deployment completed. Please check the URLs above."

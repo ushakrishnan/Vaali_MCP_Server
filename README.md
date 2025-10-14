@@ -233,22 +233,132 @@ Deploy your own instance of the Vaali MCP Server to Azure App Service:
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fmain.bicep)
 
-**Cost-effective deployment:**
-- **Basic App Service Plan (B1)**: ~$13/month
-- **Always-on SSE transport** for reliable MCP connections
-- **Automatic scaling** and HTTPS included
-- **One-click deployment** with infrastructure as code
+### 🎯 **What the Deploy Button Does:**
 
-**Alternative deployment methods:**
+When you click "Deploy to Azure", you'll see a form asking for:
+
+1. **Subscription** - Select your Azure subscription
+2. **Resource Group** - Create new (recommended: `vaali-mcp-rg`) or use existing  
+3. **Region** - Choose location (default: East US)
+4. **Web App Name** - Must be globally unique (auto-generates unique name)
+5. **App Service Plan Name** - Hosting plan name (auto-filled)
+6. **Pricing Tier** - Choose based on your needs:
+   - **B1** (default) - Perfect for demos and learning
+   - **B2** - Better for team development  
+   - **S1** - Production with staging slots
+
+**💡 Tip:** Start with B1 Basic - you can always upgrade later!
+
+### 💰 **Pricing Tiers Explained:**
+
+| Tier | Relative Cost | CPU | RAM | Use Case | Recommendation |
+|------|---------------|-----|-----|----------|----------------|
+| **B1 Basic** | **Lowest** | 1 vCPU | 1.75 GB | Demos, learning, light development | ✅ **Recommended for most users** |
+| **B2 Basic** | **2x B1** | 2 vCPU | 3.5 GB | Higher traffic, multiple concurrent users | Good for team demos |
+| **S1 Standard** | **~5x B1** | 1 vCPU | 1.75 GB | Production + staging slots, backup | Production environments |
+| **S2 Standard** | **~10x B1** | 2 vCPU | 3.5 GB | High-performance production | Enterprise use |
+
+### 🎯 **Which Tier Should I Choose?**
+
+#### **For Learning & Demos** → **B1 Basic** ✅
+- Most cost-effective option
+- Handles several concurrent Claude Desktop connections
+- Perfect for testing elicitation features
+
+#### **For Team Development** → **B2 Basic**
+- Double the performance of B1 for 2x the cost
+- Can handle more simultaneous MCP connections
+- Good for workshops or team demos
+
+#### **For Production** → **S1 Standard**
+- Includes deployment slots for staging
+- Automatic backup capabilities  
+- Better SLA and support options
+
+### 💡 **Performance Expectations:**
+- **B1**: ~10-20 concurrent MCP connections
+- **B2**: ~20-50 concurrent MCP connections  
+- **S1+**: 50+ concurrent connections with enterprise features
+
+### 📊 **Cost Comparison:**
+```
+Personal Learning:     B1 = Base Cost      (👍 Recommended)
+Small Team (2-5):      B1 = Base Cost      
+Medium Team (5-15):    B2 = 2x Base Cost
+Production/Enterprise: S1 = ~5x Base Cost (includes staging)
+```
+
+**💸 Cost Optimization Tips:**
+- Start with **B1** for development and testing
+- Upgrade only when you need more performance
+- Consider stopping the app service when not in use
+- Monitor usage through Azure Cost Management
+- Check current Azure pricing for your region
+
+### 🚀 **What Gets Created:**
+- ✅ **App Service Plan** (Linux, your chosen tier)
+- ✅ **Web App** (Node.js 18, configured for MCP)
+- ✅ **HTTPS endpoint** automatically enabled
+- ✅ **Environment variables** pre-configured for SSE transport
+
+**💡 Pricing Note:** Costs vary by region and time. B1 Basic is the most cost-effective starting point.
+
+### 📍 **After Deployment:**
+Your server will be available at:
+- **Main URL:** `https://your-app-name.azurewebsites.net`
+- **SSE Endpoint:** `https://your-app-name.azurewebsites.net/sse`
+
+### ⚡ **Alternative Deployment Methods:**
 ```bash
 # Using Azure Developer CLI (azd)
 azd auth login
 azd up
 
-# Using Azure CLI directly
+# Using Azure CLI directly  
 az group create --name vaali-mcp-rg --location eastus
-az deployment group create --resource-group vaali-mcp-rg --template-file infra/main.bicep
+az deployment group create \
+  --resource-group vaali-mcp-rg \
+  --template-file infra/main.bicep \
+  --parameters webAppName=my-unique-vaali-server
 ```
+
+### 🔄 **GitHub Actions CI/CD Setup (Advanced):**
+
+For continuous deployment from your GitHub repository:
+
+1. **Fork this repository** to your GitHub account
+
+2. **Create Azure Service Principal:**
+   ```bash
+   az ad sp create-for-rbac --name "vaali-mcp-github" \
+     --role contributor \
+     --scopes /subscriptions/YOUR_SUBSCRIPTION_ID \
+     --sdk-auth
+   ```
+
+3. **Add GitHub Secret:**
+   - Go to your forked repo → Settings → Secrets and variables → Actions
+   - Click "New repository secret"
+   - Name: `AZURE_CREDENTIALS`
+   - Value: Paste the entire JSON output from step 2
+
+4. **Deploy:** Push to `main` branch or manually trigger the workflow
+
+**✨ What the GitHub Actions workflow does:**
+- ✅ Builds and tests the project
+- ✅ Creates Azure infrastructure automatically
+- ✅ Deploys the application
+- ✅ Configures production settings
+- ✅ Runs health checks
+- ✅ Provides deployment URLs
+
+**🎯 Workflow Features:**
+- **Manual Deployment:** Use "Run workflow" button for on-demand deploys
+- **Auto Deployment:** Automatically deploys on push to main branch
+- **Environment Support:** Production and staging environment options
+- **Health Monitoring:** Automatic endpoint validation after deployment
+
+**💰 For current pricing:** Check [Azure App Service Pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region.
 
 ## 🔧 Configuration Guide
 
