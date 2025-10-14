@@ -231,7 +231,7 @@ Built on MCP SDK 1.19.1 and demonstrates cutting-edge interactive AI tool capabi
 
 Deploy your own instance of the Vaali MCP Server to Azure App Service:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fmain.bicep)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fazuredeploy.json)
 
 ### 🎯 **What the Deploy Button Does:**
 
