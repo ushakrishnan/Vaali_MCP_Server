@@ -828,6 +828,146 @@ Please provide your location for weather information:
 }
 ```
 
+### Azure Deployment with GitHub Actions
+
+For automated deployment to Azure App Service, this guide covers setting up GitHub Actions CI/CD pipeline with proper Azure credentials.
+
+#### Prerequisites
+
+- Azure subscription with sufficient permissions
+- GitHub repository with your MCP server code
+- Azure CLI installed locally
+
+#### Step 1: Azure Service Principal Setup
+
+Due to Azure tenant policies that may restrict credential lifetime, you have two approaches:
+
+##### Option A: Azure CLI (If Policies Allow)
+
+```bash
+# Get your subscription and tenant info
+az account show --query "{subscriptionId:id, tenantId:tenantId}" --output table
+
+# Create service principal (replace YOUR_SUBSCRIPTION_ID)
+az ad sp create-for-rbac \
+  --name "your-mcp-server-github-actions" \
+  --role contributor \
+  --scopes /subscriptions/YOUR_SUBSCRIPTION_ID \
+  --sdk-auth
+```
+
+**Note:** If you get "Credential lifetime exceeds the max value" error, use Option B.
+
+##### Option B: Azure Portal Manual Setup (Recommended)
+
+When Azure CLI fails due to restrictive tenant policies:
+
+1. **Create App Registration:**
+   - Go to [Azure Portal](https://portal.azure.com) → **Microsoft Entra ID** → **App registrations**
+   - Click **"New registration"**
+   - Name: `your-mcp-server-github-actions`
+   - Click **"Register"**
+   - Copy the **Application (client) ID**
+
+2. **Create Client Secret:**
+   - In your app registration → **Certificates & secrets**
+   - Click **"New client secret"**
+   - Description: `GitHub Actions Secret`
+   - Expires: Choose the maximum allowed by your tenant policy
+   - Click **"Add"** and **copy the secret value immediately**
+
+3. **Assign Contributor Role:**
+   ```bash
+   # Replace with your values
+   az role assignment create \
+     --assignee YOUR_APP_CLIENT_ID \
+     --role contributor \
+     --scope /subscriptions/YOUR_SUBSCRIPTION_ID
+   ```
+
+4. **Create Credentials JSON:**
+   ```json
+   {
+     "clientId": "YOUR_APP_CLIENT_ID",
+     "clientSecret": "YOUR_CLIENT_SECRET",
+     "subscriptionId": "YOUR_SUBSCRIPTION_ID", 
+     "tenantId": "YOUR_TENANT_ID"
+   }
+   ```
+
+#### Step 2: GitHub Repository Setup
+
+1. **Add GitHub Secret:**
+   - Go to your GitHub repo → **Settings** → **Secrets and variables** → **Actions**
+   - Click **"New repository secret"**
+   - Name: `AZURE_CREDENTIALS`
+   - Value: Paste the JSON from Step 1
+
+2. **Verify Workflow File:**
+   Ensure `.github/workflows/azure-deploy.yml` exists with proper triggers:
+   ```yaml
+   on:
+     workflow_dispatch:
+     push:
+       branches: [ main ]
+       paths-ignore:
+         - '**.md'
+         - 'docs/**'
+         - 'infra/**'
+   ```
+
+#### Step 3: Test Deployment
+
+1. **Manual Test:**
+   - Go to **Actions** tab in your GitHub repo
+   - Click **"Deploy to Azure App Service"**
+   - Click **"Run workflow"**
+   - Select branch and environment
+   - Click **"Run workflow"**
+
+2. **Automatic Test:**
+   - Make a code change (not documentation)
+   - Push to main branch
+   - Check **Actions** tab for automatic deployment
+
+#### Workflow Features
+
+The GitHub Actions workflow includes:
+
+- ✅ **Smart Credential Detection:** Skips deployment if `AZURE_CREDENTIALS` not configured
+- ✅ **Automatic Infrastructure:** Creates Azure resources if they don't exist
+- ✅ **Build and Test:** Runs `npm ci`, `npm run build`, `npm test`
+- ✅ **Production Configuration:** Sets `NODE_ENV=production`, `PORT=8080`
+- ✅ **Health Checks:** Validates endpoints after deployment
+- ✅ **Deployment URLs:** Provides SSE and health endpoint URLs
+
+#### Troubleshooting
+
+**Common Issues:**
+
+1. **"Credential lifetime exceeds policy"**
+   - Use Azure Portal manual setup (Option B)
+   - Contact Azure admin to check tenant policies
+
+2. **"Insufficient privileges"**
+   - Ensure service principal has Contributor role
+   - Check subscription permissions
+
+3. **"Resource group creation failed"**
+   - Verify subscription has quota for App Service
+   - Check naming conflicts
+
+4. **"Deployment timeout"**
+   - Check application logs in Azure portal
+   - Verify package.json scripts (`build`, `start`)
+
+#### Security Best Practices
+
+- ✅ **Minimal Permissions:** Service principal has only Contributor access to specific subscription
+- ✅ **Short-Lived Secrets:** Use minimum credential lifetime required
+- ✅ **Secure Storage:** GitHub encrypts repository secrets
+- ✅ **Audit Trail:** All deployments logged in GitHub Actions and Azure Activity Log
+
 This comprehensive implementation guide provides everything needed to build production-ready MCP servers with hybrid elicitation patterns, complete testing frameworks, and robust error handling.
 
 ## Conclusion
