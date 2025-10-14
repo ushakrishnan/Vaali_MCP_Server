@@ -43,6 +43,14 @@ With Standard Client:
    Or enter any city name..."
 ```
 
+### 📸 Real Claude Desktop Elicitation in Action
+
+Here's how the Vaali MCP server's elicitation looks in Claude Desktop:
+
+![Claude Desktop Elicitation Screenshot](public/claude_screenshot.png)
+
+*Screenshot showing Claude Desktop's interactive parameter collection with the Vaali MCP server - demonstrating the seamless user experience of hybrid elicitation patterns.*
+
 ## 🧠 Technical Innovation (For Researchers)
 
 This project implements **both official MCP elicitation and intelligent parameter guidance patterns**, demonstrating comprehensive approaches to interactive parameter collection in AI agent workflows.
