@@ -4,11 +4,6 @@
 ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)
 ![MCP](https://img.shields.io/badge/MCP-1.19.1-purple.svg)
-
-## ☁️ One-Click Azure Deployment
-
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fazuredeploy.json)
-
 ![Azure App Service](https://img.shields.io/badge/Azure-App%20Service-0078D4?logo=microsoftazure&logoColor=white)
 ![Azure Resource Manager](https://img.shields.io/badge/ARM-Template-0078D4?logo=microsoftazure&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub-Actions%20CI%2FCD-2088FF?logo=githubactions&logoColor=white)
@@ -17,6 +12,10 @@
 ![Linux](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)
 ![Cost Optimized](https://img.shields.io/badge/Cost-B1%20Basic%20Tier-00BCF2?logo=microsoftazure&logoColor=white)
 ![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
+
+## ☁️ One-Click Azure Deployment
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fazuredeploy.json)
 
 **Deploy your own MCP Server instantly!** • **B1 Basic tier** • **Cost-effective defaults** • **Production-ready**
 
