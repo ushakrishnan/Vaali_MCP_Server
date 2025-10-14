@@ -20,6 +20,31 @@
 
 **Deploy your own MCP Server instantly!** • **B1 Basic tier** • **Cost-effective defaults** • **Production-ready**
 
+### 💰 **Estimated Monthly Costs** *(as of October 2025)*
+
+| Usage Level | B1 Basic | B2 Basic | S1 Standard | Popular Regions |
+|-------------|----------|----------|-------------|-----------------|
+| **Light usage** (1-5 users, few hours/day) | **$13-18/month** | $26-36/month | $65-90/month | US East, US West |
+| **Development** (team of 5-10, business hours) | **$15-22/month** | $30-44/month | $75-110/month | West Europe, UK South |
+| **Production** (10-20 users, always-on) | **$18-25/month** | $36-50/month | $90-125/month | East Asia, Australia East |
+
+**💡 Cost Factors:**
+- **Compute:** ~85% of total cost (varies by region)
+- **Outbound data:** Usually <$1/month for MCP usage
+- **Storage:** Minimal for stateless MCP servers
+
+**🌍 Regional Cost Variation:**
+- **Lowest:** US East, US West 2, US Central
+- **Medium:** West Europe, UK South, Canada Central  
+- **Higher:** Asia Pacific, Australia, Brazil South
+
+**⏱️ Cost Control Tips:**
+- **Stop when not needed:** Save 100% during non-use periods
+- **Start with B1 Basic:** Upgrade only when performance requires it
+- **Monitor usage:** Azure Cost Management provides detailed tracking
+
+*Estimates based on Azure pricing as of October 2025. Actual costs may vary by region and usage patterns. Check current [Azure App Service pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region.*
+
 A **Model Context Protocol (MCP) server** that demonstrates advanced AI agent capabilities through interactive parameter collection and contextual workflow automation, featuring both official MCP elicitation and intelligent parameter guidance patterns.
 
 ## 📑 Table of Contents
