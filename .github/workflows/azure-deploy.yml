@@ -26,9 +26,9 @@ on:
       - 'infra/**'
 
 env:
-  AZURE_RESOURCE_GROUP: vaali-mcp-rg
-  AZURE_LOCATION: eastus
-  WEB_APP_NAME: vaali-mcp-server
+  AZURE_RESOURCE_GROUP: vaali-o-mcp
+  AZURE_LOCATION: centralus
+  WEB_APP_NAME: vaali-mcp
   APP_SERVICE_PLAN_NAME: vaali-mcp-plan
 
 jobs:
@@ -66,7 +66,7 @@ jobs:
       run: |
         # Create deployment package with only necessary files
         mkdir deployment
-        cp -r dist package.json package-lock.json deployment/
+        cp -r lib package.json package-lock.json deployment/
         # Copy data and config if they exist
         [ -d "data" ] && cp -r data deployment/ || echo "No data directory found"
         [ -f "config.json" ] && cp config.json deployment/ || echo "No config.json found"
