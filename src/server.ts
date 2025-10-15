@@ -55,7 +55,7 @@ const server = new McpServer({
 // Resources capability - provide access to files and data
 server.resource(
   "config",
-  "file://config.json",
+  "file://config.json/",
   {
     description: "Application configuration file", 
     mimeType: "application/json"
@@ -114,7 +114,7 @@ server.resource(
 
 server.resource(
   "readme",
-  "file://readme.md",
+  "file://readme.md/",
   {
     description: "Project documentation and usage guide",
     mimeType: "text/markdown"
@@ -142,7 +142,7 @@ server.resource(
 
 server.resource(
   "sample-data",
-  "file://data/sample.json",
+  "file://data/sample.json/",
   {
     description: "Sample data for testing and demonstration",
     mimeType: "application/json"
