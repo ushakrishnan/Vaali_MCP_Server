@@ -10,23 +10,38 @@
 ![Platform](https://img.shields.io/badge/Platform-Linux-FCC624?logo=linux&logoColor=black)
 ![Cost Optimized](https://img.shields.io/badge/Cost-B1%20Basic%20Tier-00BCF2?logo=microsoftazure&logoColor=white)
 
-## ☁️ One-Click Azure Deployment
+## ☁️ Azure Deployment
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fazuredeploy.json)
+Your MCP Server can be deployed to Azure App Service for cloud access and scalability.
 
-**Deploy your own MCP Server for learning and experimentation!** • **B1 Basic tier** • **Cost-effective defaults**
+### 🚀 **GitHub Actions Deployment (Recommended)**
 
-### 💰 **Cost Information** *(October 2025)*
+The easiest way to deploy is through automated GitHub Actions:
 
-**⚠️ Important:** Costs vary significantly by region and change over time. Always check current [Azure App Service pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region before deploying.
+1. **Fork this repository** to your GitHub account
 
-**💡 Cost Factors:**
-- **App Service runs 24/7** - You're charged for the full month regardless of usage
-- **B1 Basic tier** is the most cost-effective starting point
-- **Regional variation** - US regions typically cost less than Asia Pacific
-- **Outbound data transfer** charges may apply for high-traffic scenarios
+2. **Get Azure Publish Profile:**
+   ```bash
+   az webapp deployment list-publishing-profiles -n your-app-name -g your-resource-group --xml
+   ```
 
-**🎯 Recommendation:** Start with B1 Basic tier and monitor actual costs in Azure Cost Management
+3. **Add GitHub Secret:**
+   - Go to your forked repo → Settings → Secrets and variables → Actions
+   - Click "New repository secret"  
+   - Name: `AZURE_WEBAPP_PUBLISH_PROFILE`
+   - Value: Paste the XML output from step 2
+
+4. **Automatic Deployment:**
+   - ✅ **Push to main** → Automatically builds and deploys
+   - ✅ **TypeScript compilation** → Handles build process properly
+   - ✅ **Production ready** → Configures environment automatically
+
+### 🎯 **What the Automation Does:**
+- ✅ Builds TypeScript to JavaScript properly
+- ✅ Installs production dependencies  
+- ✅ Deploys to Azure App Service
+- ✅ Configures Node.js environment
+- ✅ Provides deployment status and URL
 
 A **Model Context Protocol (MCP) server** that demonstrates advanced AI agent capabilities through interactive parameter collection and contextual workflow automation, featuring both official MCP elicitation and intelligent parameter guidance patterns.
 
@@ -251,152 +266,37 @@ Demonstrates **progressive enhancement** in structured protocols - tools automat
 
 Built on MCP SDK 1.7.0 and demonstrates interactive AI tool capabilities for learning purposes.
 
-## ☁️ Complete Azure Deployment Guide
+## ☁️ Azure Infrastructure Setup
 
-Deploy your own instance of the Vaali MCP Server to Azure App Service:
+If you need to create the Azure resources first, you can use the Bicep/ARM templates:
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fushakrishnan%2FVaali_MCP_Server%2Fmain%2Finfra%2Fazuredeploy.json)
-
-### 🎯 **What the Deploy Button Does:**
-
-When you click "Deploy to Azure", you'll see a form asking for:
-
-1. **Subscription** - Select your Azure subscription
-2. **Resource Group** - Create new (recommended: `vaali-mcp-rg`) or use existing
-3. **Web App Name** - Enter a globally unique name (e.g., `my-vaali-mcp-server`)
-4. **App Service Plan Name** - Enter a plan name (e.g., `my-vaali-mcp-server-plan`)
-5. **Pricing Tier** - Choose based on your needs:
-   - **B1** (default) - Perfect for demos and learning
-   - **B2** - Better for team development  
-   - **S1** - Production with staging slots
-
-**💡 Tip:** Start with B1 Basic - you can always upgrade later!
-
-**📍 Location:** Resources are automatically deployed to the same region as your resource group for optimal performance and cost.
-
-### 💰 **Pricing Tiers Explained:**
-
-| Tier | Relative Cost | CPU | RAM | Use Case | Recommendation |
-|------|---------------|-----|-----|----------|----------------|
-| **B1 Basic** | **Lowest** | 1 vCPU | 1.75 GB | Demos, learning, light development | ✅ **Recommended for most users** |
-| **B2 Basic** | **2x B1** | 2 vCPU | 3.5 GB | Higher traffic, multiple concurrent users | Good for team demos |
-| **S1 Standard** | **~5x B1** | 1 vCPU | 1.75 GB | Production + staging slots, backup | Production environments |
-| **S2 Standard** | **~10x B1** | 2 vCPU | 3.5 GB | High-performance production | Enterprise use |
-
-### 🎯 **Which Tier Should I Choose?**
-
-#### **For Learning & Demos** → **B1 Basic** ✅
-- Most cost-effective option
-- Handles several concurrent Claude Desktop connections
-- Perfect for testing elicitation features
-
-#### **For Team Development** → **B2 Basic**
-- Double the performance of B1 for 2x the cost
-- Can handle more simultaneous MCP connections
-- Good for workshops or team demos
-
-#### **For Production** → **S1 Standard**
-- Includes deployment slots for staging
-- Automatic backup capabilities  
-- Better SLA and support options
-
-### 💡 **Performance Expectations:**
-- **B1**: ~10-20 concurrent MCP connections
-- **B2**: ~20-50 concurrent MCP connections  
-- **S1+**: 50+ concurrent connections with enterprise features
-
-### 📊 **Cost Comparison:**
-```
-Personal Learning:     B1 = Base Cost      (👍 Recommended)
-Small Team (2-5):      B1 = Base Cost      
-Medium Team (5-15):    B2 = 2x Base Cost
-Production/Enterprise: S1 = ~5x Base Cost (includes staging)
-```
-
-**💸 Cost Optimization Tips:**
-- Start with **B1** for development and testing
-- Upgrade only when you need more performance
-- Monitor usage through Azure Cost Management
-- Check current Azure pricing for your region
-
-**⚠️ Note:** App Service runs continuously 24/7 and charges for the full month regardless of usage
-
-### 🚀 **What Gets Created:**
-- ✅ **App Service Plan** (Linux, your chosen tier)
-- ✅ **Web App** (Node.js 18, configured for MCP)
-- ✅ **HTTPS endpoint** automatically enabled
-- ✅ **Environment variables** pre-configured for SSE transport
-
-**💡 Pricing Note:** Costs vary by region and time. B1 Basic is the most cost-effective starting point.
-
-### 📍 **After Deployment:**
-Your server will be available at:
-- **Main URL:** `https://your-app-name.azurewebsites.net`
-- **SSE Endpoint:** `https://your-app-name.azurewebsites.net/sse`
-
-### ⚡ **Alternative Deployment Methods:**
+### 🏗️ **Manual Infrastructure Creation:**
 ```bash
-# Using Azure Developer CLI (azd)
-azd auth login
-azd up
+# Create resource group
+az group create --name vaali-mcp-rg --location centralus
 
-# Using Azure CLI directly  
-az group create --name vaali-mcp-rg --location eastus
+# Deploy infrastructure using Bicep
 az deployment group create \
   --resource-group vaali-mcp-rg \
   --template-file infra/main.bicep \
-  --parameters webAppName=my-unique-vaali-server
+  --parameters webAppName=your-unique-app-name
+
+# Or deploy using ARM template
+az deployment group create \
+  --resource-group vaali-mcp-rg \
+  --template-file infra/azuredeploy.json \
+  --parameters webAppName=your-unique-app-name
 ```
 
-### 🔄 **GitHub Actions CI/CD Setup (Automatic Deployment):**
+### � **Pricing Tiers:**
 
-**✨ Now with automatic deployment!** The workflow triggers on every push to main branch.
+| Tier | Use Case | Relative Cost |
+|------|----------|---------------|
+| **B1 Basic** | Learning, demos | **Lowest** ✅ |
+| **B2 Basic** | Team development | **2x B1** |
+| **S1 Standard** | Production | **~5x B1** |
 
-For continuous deployment from your GitHub repository:
-
-1. **Fork this repository** to your GitHub account
-
-2. **Create Azure Service Principal:**
-   ```bash
-   az ad sp create-for-rbac --name "vaali-mcp-github" \
-     --role contributor \
-     --scopes /subscriptions/YOUR_SUBSCRIPTION_ID \
-     --sdk-auth
-   ```
-
-3. **Add GitHub Secret:**
-   - Go to your forked repo → Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Name: `AZURE_CREDENTIALS`
-   - Value: Paste the entire JSON output from step 2
-
-4. **Automatic Deployment:** 
-   - ✅ **Push to main** → Automatically deploys to Azure
-   - ✅ **Merge PR** → Automatically deploys to Azure  
-   - ✅ **Manual trigger** → Use "Run workflow" button
-
-**🎯 Smart Deployment Logic:**
-- **Skips deployment** if AZURE_CREDENTIALS not configured (shows setup instructions)
-- **Builds and tests** on every push (even without Azure credentials)
-- **Deploys only** when credentials are available and code changes
-- **Ignores documentation changes** (*.md files, docs/) for efficiency
-
-**✨ What the automated workflow does:**
-- ✅ Builds and tests the project on every push
-- ✅ Creates Azure infrastructure automatically (if needed)
-- ✅ Deploys the application to Azure App Service
-- ✅ Configures production settings (NODE_ENV, PORT, etc.)
-- ✅ Runs health checks and provides deployment URLs
-- ✅ Shows helpful setup instructions if credentials missing
-
-**🎯 Workflow Features:**
-- **Manual Deployment:** Use "Run workflow" button for on-demand deploys
-- **Auto Deployment:** Automatically deploys on push to main branch or merged PRs
-- **Environment Support:** Production and staging environment options
-- **Health Monitoring:** Automatic endpoint validation after deployment
-- **Smart Skipping:** Only deploys when Azure credentials are configured
-
-**💰 For current pricing:** Check [Azure App Service Pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region.
+**⚠️ Note:** App Service runs 24/7. Check current [Azure pricing](https://azure.microsoft.com/pricing/details/app-service/) for your region.
 
 ## 🔧 Configuration Guide
 
