@@ -3,8 +3,37 @@ import { z } from "zod";
 import * as fs from "fs";
 import * as path from "path";
 
-// Get the project root directory (2 levels up from lib/src/server.js)
-const projectRoot = path.resolve(__dirname, "../..");
+// More robust project root detection for both development and production
+function getProjectRoot(): string {
+  // In production (Azure), files are deployed to wwwroot, so we need to look relative to the current file
+  // In development, we're running from lib/src/server.js and need to go up 2 levels
+  
+  // Try current working directory first (Azure production)
+  if (fs.existsSync(path.join(process.cwd(), "config.json"))) {
+    console.error(`[DEBUG] Using current working directory as project root: ${process.cwd()}`);
+    return process.cwd();
+  }
+  
+  // Try 2 levels up from __dirname (development)
+  const devRoot = path.resolve(__dirname, "../..");
+  if (fs.existsSync(path.join(devRoot, "config.json"))) {
+    console.error(`[DEBUG] Using development project root: ${devRoot}`);
+    return devRoot;
+  }
+  
+  // Try 1 level up from __dirname (alternative deployment structure)
+  const altRoot = path.resolve(__dirname, "..");
+  if (fs.existsSync(path.join(altRoot, "config.json"))) {
+    console.error(`[DEBUG] Using alternative project root: ${altRoot}`);
+    return altRoot;
+  }
+  
+  // Fallback to current working directory
+  console.error(`[DEBUG] Fallback to current working directory: ${process.cwd()}`);
+  return process.cwd();
+}
+
+const projectRoot = getProjectRoot();
 
 // Create server instance with all capabilities
 const server = new McpServer({
@@ -46,8 +75,39 @@ server.resource(
         }]
       };
     } catch (error) {
-      console.error(`[DEBUG] Error reading config: ${error}`);
-      throw new Error(`Failed to read config.json: ${error}`);
+      console.error(`[DEBUG] Error reading config from ${path.join(projectRoot, "config.json")}: ${error}`);
+      // Provide fallback configuration
+      const fallbackConfig = {
+        appName: "vaali",
+        version: "1.0.0",
+        environment: "production",
+        features: ["resources", "prompts", "tools", "roots"],
+        defaultLocation: "San Francisco",
+        timezone: "America/Los_Angeles",
+        supportedRegions: ["North America", "Europe", "Asia-Pacific"],
+        serverInfo: {
+          transport: "sse",
+          capabilities: {
+            resources: true,
+            prompts: true,
+            tools: true,
+            roots: true
+          }
+        },
+        defaults: {
+          weatherUnit: "celsius",
+          language: "en",
+          theme: "auto"
+        }
+      };
+      console.error(`[DEBUG] Using fallback config`);
+      return {
+        contents: [{
+          uri: uri.toString().replace(/\/$/, ''),
+          mimeType: "application/json", 
+          text: JSON.stringify(fallbackConfig, null, 2)
+        }]
+      };
     }
   }
 );
@@ -102,8 +162,47 @@ server.resource(
         }]
       };
     } catch (error) {
-      console.error(`[DEBUG] Error reading sample data: ${error}`);
-      throw new Error(`Failed to read data/sample.json: ${error}`);
+      console.error(`[DEBUG] Error reading sample data from ${path.join(projectRoot, "data", "sample.json")}: ${error}`);
+      // Provide fallback sample data
+      const fallbackData = {
+        users: [
+          {
+            id: 1,
+            name: "Alice",
+            role: "admin",
+            location: "New York",
+            preferences: {
+              weatherAlerts: true,
+              temperatureUnit: "fahrenheit",
+              language: "en"
+            }
+          },
+          {
+            id: 2,
+            name: "Bob", 
+            role: "user",
+            location: "London",
+            preferences: {
+              weatherAlerts: false,
+              temperatureUnit: "celsius",
+              language: "en"
+            }
+          }
+        ],
+        settings: {
+          theme: "dark",
+          language: "en",
+          defaultWeatherUnit: "celsius"
+        }
+      };
+      console.error(`[DEBUG] Using fallback sample data`);
+      return {
+        contents: [{
+          uri: uri.toString().replace(/\/$/, ''),
+          mimeType: "application/json",
+          text: JSON.stringify(fallbackData, null, 2)
+        }]
+      };
     }
   }
 );
