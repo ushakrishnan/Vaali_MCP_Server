@@ -4,6 +4,7 @@
   "description": "My MCP Server",
   "main": "./lib/src/index.js",
   "scripts": {
+    "start": "npm run build && npm run start:sse",
     "dev:sse": "nodemon --exec node --inspect=9239 --signal SIGINT -r ts-node/register ./src/index.ts sse",
     "dev:stdio": "nodemon --quiet --exec node --signal SIGINT -r ts-node/register ./src/index.ts stdio",
     "dev:inspector": "mcp-inspector",
