@@ -1,47 +1,13 @@
 name: Deploy to Azure App Service
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-        - production
-        - staging
   push:
     branches: [ main ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'infra/**'
-  pull_request:
-    branches: [ main ]
-    types: [ closed ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'infra/**'
-
-env:
-  AZURE_RESOURCE_GROUP: vaali-o-mcp
-  AZURE_LOCATION: centralus
-  WEB_APP_NAME: vaali-mcp
-  APP_SERVICE_PLAN_NAME: vaali-mcp-plan
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    # Only run on push to main or merged PRs, skip if no AZURE_CREDENTIALS
-    if: |
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-      github.event_name == 'workflow_dispatch'
-    permissions:
-      contents: read
-      actions: read
     
     steps:
     - name: Checkout code
@@ -56,148 +22,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Build project
+    - name: Build TypeScript
       run: npm run build
       
-    - name: Run tests (if available)
-      run: npm test --if-present
-      
-    - name: Create deployment archive
-      run: |
-        # Create deployment package with only necessary files
-        mkdir deployment
-        cp -r lib package.json package-lock.json deployment/
-        # Copy data and config if they exist
-        [ -d "data" ] && cp -r data deployment/ || echo "No data directory found"
-        [ -f "config.json" ] && cp config.json deployment/ || echo "No config.json found"
-        cd deployment && zip -r ../deploy.zip .
-        
-    - name: Check for Azure credentials
-      id: check-creds
-      run: |
-        if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
-          echo "has-credentials=false" >> $GITHUB_OUTPUT
-          echo "⚠️ AZURE_CREDENTIALS secret not configured - skipping deployment"
-          echo "📖 See README.md for GitHub Actions CI/CD setup instructions"
-        else
-          echo "has-credentials=true" >> $GITHUB_OUTPUT
-          echo "✅ Azure credentials found - proceeding with deployment"
-        fi
-        
-    - name: Setup Azure CLI
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      run: |
-        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-        
-    - name: Login to Azure with Service Principal
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      run: |
-        # Parse Azure credentials JSON
-        CLIENT_ID=$(echo $AZURE_CREDENTIALS | jq -r '.clientId')
-        CLIENT_SECRET=$(echo $AZURE_CREDENTIALS | jq -r '.clientSecret')
-        TENANT_ID=$(echo $AZURE_CREDENTIALS | jq -r '.tenantId')
-        SUBSCRIPTION_ID=$(echo $AZURE_CREDENTIALS | jq -r '.subscriptionId')
-        
-        # Login with service principal
-        az login --service-principal --username $CLIENT_ID --password $CLIENT_SECRET --tenant $TENANT_ID
-        az account set --subscription $SUBSCRIPTION_ID
-        
-    - name: Create Resource Group
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      run: |
-        az group create \
-          --name ${{ env.AZURE_RESOURCE_GROUP }} \
-          --location ${{ env.AZURE_LOCATION }} \
-          --output none || echo "Resource group may already exist"
-          
-    - name: Deploy Infrastructure
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      run: |
-        az deployment group create \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --template-file infra/azuredeploy.json \
-          --parameters webAppName=${{ env.WEB_APP_NAME }} \
-          --parameters appServicePlanName=${{ env.APP_SERVICE_PLAN_NAME }} \
-          --output none
-          
-    - name: Deploy Application
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      run: |
-        az webapp deployment source config-zip \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --name ${{ env.WEB_APP_NAME }} \
-          --src deploy.zip \
-          --timeout 600
-          
-    - name: Configure App Settings
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      run: |
-        az webapp config appsettings set \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --name ${{ env.WEB_APP_NAME }} \
-          --settings NODE_ENV=production PORT=8080 WEBSITE_RUN_FROM_PACKAGE=1 \
-          --output none
-          
-    - name: Restart App Service
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      run: |
-        az webapp restart \
-          --name ${{ env.WEB_APP_NAME }} \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --output none
-          
-    - name: Get App Service URL
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      id: app-url
-      run: |
-        APP_URL=$(az webapp show \
-          --name ${{ env.WEB_APP_NAME }} \
-          --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-          --query defaultHostName -o tsv)
-        echo "app-url=https://$APP_URL" >> $GITHUB_OUTPUT
-        echo "🚀 Deployed to: https://$APP_URL"
-        echo "📡 SSE Endpoint: https://$APP_URL/sse"
-        echo "📄 Health: https://$APP_URL/health"
-        
-    - name: Health Check
-      if: steps.check-creds.outputs.has-credentials == 'true'
-      run: |
-        echo "Waiting for deployment to be ready..."
-        sleep 60
-        
-        # Try multiple endpoints to verify deployment
-        for i in {1..5}; do
-          echo "Health check attempt $i/5..."
-          if curl -f -s ${{ steps.app-url.outputs.app-url }}/sse > /dev/null; then
-            echo "✅ SSE endpoint is healthy"
-            break
-          elif curl -f -s ${{ steps.app-url.outputs.app-url }}/health > /dev/null; then
-            echo "✅ Health endpoint is responding" 
-            break
-          else
-            echo "⚠️ Endpoints not ready yet, waiting..."
-            sleep 30
-          fi
-        done
-        
-        echo "🎉 Deployment completed successfully!"
-        echo "📝 Next steps: Configure your MCP client to use the SSE endpoint above"
-        
-    - name: Setup Instructions
-      if: steps.check-creds.outputs.has-credentials == 'false'
-      run: |
-        echo "🔧 GitHub Actions CI/CD Setup Required:"
-        echo ""
-        echo "1. Create Azure Service Principal:"
-        echo "   az ad sp create-for-rbac --name 'vaali-mcp-github' --role contributor --scopes /subscriptions/YOUR_SUBSCRIPTION_ID --sdk-auth"
-        echo ""
-        echo "2. Add GitHub Secret:"
-        echo "   - Go to Settings → Secrets and variables → Actions"
-        echo "   - New repository secret: AZURE_CREDENTIALS"
-        echo "   - Paste the JSON output from step 1"
-        echo ""
-        echo "3. Push code to main branch to trigger automatic deployment!"
-        echo ""
-        echo "📖 See README.md for detailed instructions"
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'vaali-mcp'
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: '.'
