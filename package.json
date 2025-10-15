@@ -4,7 +4,7 @@
   "description": "My MCP Server",
   "main": "./lib/src/index.js",
   "scripts": {
-    "start": "node ./lib/src/index.js sse",
+    "start": "node lib/src/index.js sse",
     "build": "tsc --build",
     "dev:sse": "nodemon --exec node --inspect=9239 --signal SIGINT -r ts-node/register ./src/index.ts sse",
     "dev:stdio": "nodemon --quiet --exec node --signal SIGINT -r ts-node/register ./src/index.ts stdio",
