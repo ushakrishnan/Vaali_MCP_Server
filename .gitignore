@@ -3,41 +3,12 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
+# Build outputs
+lib/
+dist/
+build/
+out/
 
 # Environment variables
 .env
@@ -46,11 +17,23 @@ jspm_packages/
 .env.test.local
 .env.production.local
 
-# Build outputs
-lib/
-dist/
-build/
-out/
+# TypeScript cache
+*.tsbuildinfo
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Logs
+logs
+*.log
+
+# Test artifacts
+test-results/
+coverage/
+.nyc_output
 
 # IDE and editor files
 .vscode/settings.json
@@ -70,34 +53,17 @@ ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
 # Temporary files
 *.tmp
 *.temp
 
-# MCP specific
+# Azure deployment artifacts
 .deployment
+deploy.zip
+deploy-*.zip
+deployment/
 
-# Test artifacts
-test-results/
-coverage/
-
-# Package manager lock files (keep one, ignore others if using multiple)
-# Uncomment the ones you want to ignore:
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
-
-# Local configuration files that shouldn't be committed
+# Local configuration files
 config.local.json
 claude_config_*.json
 
